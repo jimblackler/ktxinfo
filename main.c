@@ -78,6 +78,9 @@ int main(int argc, char** argv) {
       case KTX_SUCCESS:
         output_info(texture);
         break;
+      case KTX_FILE_DATA_ERROR:
+        printf("The data in the file is inconsistent with the spec.\n");
+        break;
       case KTX_FILE_OPEN_FAILED:
         printf("File open failed.\n");
         break;
