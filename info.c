@@ -19,35 +19,17 @@ void output_info(ktxTexture* texture) {
   printf_glenum(texture->glType);
   printf("\n");
 
+  printf("isArray:\t%s\n", texture->isArray ? "true" : "false");
+  printf("isCubemap:\t%s\n", texture->isCubemap ? "true" : "false");
+  printf("isCompressed:\t%s\n", texture->isCompressed ? "true" : "false");
+  printf("generateMipmaps:\t%s\n", texture->generateMipmaps ? "true" : "false");
+  printf("baseWidth:\t%d\n", texture->baseWidth);
+  printf("baseHeight:\t%d\n", texture->baseHeight);
+  printf("baseDepth:\t%d\n", texture->baseDepth);
+  printf("numDimensions:\t%d\n", texture->numDimensions);
+  printf("numLevels:\t%d\n", texture->numLevels);
+  printf("numLayers:\t%d\n", texture->numLayers);
+  printf("numFaces:\t%d\n", texture->numFaces);
+  printf("kvDataLen:\t%u\n", texture->kvDataLen);
+  printf("dataSize:\t%zu\n", texture->dataSize);
 }
-
-
-
-//    ktx_uint32_t ; /*!< Type of the texture data, e.g, GL_UNSIGNED_BYTE.*/
-//      ktx_bool_t isArray; /*!< KTX_TRUE if the texture is an array texture, i.e,
-//                               a GL_TEXTURE_*_ARRAY target is to be used. */
-//      ktx_bool_t isCubemap; /*!< KTX_TRUE if the texture is a cubemap or
-//                                 cubemap array. */
-//      ktx_bool_t isCompressed; /*!< KTX_TRUE if @c glInternalFormat is that of
-//                                    a compressed texture. */
-//      ktx_bool_t generateMipmaps; /*!< KTX_TRUE if mipmaps should be generated
-//                                       for the texture by ktxTexture_GLUpload()
-//                                       or ktx_Texture_VkUpload(). */
-//    ktx_uint32_t baseWidth;  /*!< Width of the base level of the texture. */
-//    ktx_uint32_t baseHeight; /*!< Height of the base level of the texture. */
-//    ktx_uint32_t baseDepth;  /*!< Depth of the base level of the texture. */
-//    ktx_uint32_t numDimensions; /*!< Number of dimensions in the texture: 1, 2
-//                                     or 3. */
-//    ktx_uint32_t numLevels; /*!< Number of mip levels in the texture. Should be
-//                                 1, if @c generateMipmaps is KTX_TRUE. Can be
-//                                 less than a full pyramid but always starts at
-//                                 the base level. */
-//    ktx_uint32_t numLayers; /*!< Number of array layers in the texture. */
-//    ktx_uint32_t numFaces; /*!< Number of faces, 6 for cube maps, 1 otherwise.*/
-//     ktxHashList kvDataHead; /*!< Head of the hash list of metadata. */
-//    ktx_uint32_t kvDataLen; /*!< Length of the metadata, if it has been
-//                                 extracted in its raw form, otherwise 0. */
-//    ktx_uint8_t* kvData; /*!< Pointer to the metadata, if it has been extracted
-//                              in its raw form, otherwise NULL. */
-//      ktx_size_t dataSize; /*!< Length of the image data in bytes. */
-//    ktx_uint8_t* pData; /*!< Pointer to the image data. */
