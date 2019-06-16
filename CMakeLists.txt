@@ -4,8 +4,8 @@ add_subdirectory(ktx)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(ktxinfo main.c info.c info.h glnames.c glnames.h)
+add_executable(ktxinfo main.c info.cpp glnames.c)
 
 target_link_libraries(ktxinfo ktx)
 
-target_include_directories(ktxinfo PRIVATE ktx/include)
+target_include_directories(ktxinfo PRIVATE ktx ktx/include variadictable)
