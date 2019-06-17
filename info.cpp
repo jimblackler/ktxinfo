@@ -3,7 +3,6 @@ extern "C" {
 #include "glnames.h"
 }
 
-#include <c++/v1/iostream>
 #include <sstream>
 #include "variadictable.h"
 
