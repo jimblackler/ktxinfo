@@ -4,29 +4,43 @@ extern "C" {
 }
 
 #include <c++/v1/iostream>
+#include <sstream>
 #include "variadictable.h"
 
-void output_info(ktxTexture* texture) {
+std::string toHex(int i) {
+  std::ostringstream stringStream;
+  stringStream << std::hex << "0x" << i;
+  return stringStream.str();
+}
 
-  VariadicTable<std::string, int, std::string> vt({"Field", "Hex", "Enum"});
+void output_info(ktxTexture *texture) {
 
-  vt.addRow({"glFormat", texture->glFormat, name_from_enum(texture->glFormat)});
-  vt.addRow({"glInternalformat", texture->glInternalformat, name_from_enum(texture->glInternalformat)});
-  vt.addRow({"glBaseInternalformat", texture->glBaseInternalformat, name_from_enum(texture->glBaseInternalformat)});
-  vt.addRow({"glType", texture->glType, name_from_enum(texture->glType)});
-  vt.addRow({"isArray", texture->isArray, ""});
-  vt.addRow({"isCubemap", texture->isCubemap, ""});
-  vt.addRow({"isCompressed", texture->isCompressed, ""});
-  vt.addRow({"generateMipmaps", texture->generateMipmaps, ""});
-  vt.addRow({"baseWidth", texture->baseWidth, ""});
-  vt.addRow({"baseHeight", texture->baseHeight, ""});
-  vt.addRow({"baseDepth", texture->baseDepth, ""});
-  vt.addRow({"numDimensions", texture->numDimensions, ""});
-  vt.addRow({"numLevels", texture->numLevels, ""});
-  vt.addRow({"numLayers", texture->numLayers, ""});
-  vt.addRow({"numFaces", texture->numFaces, ""});
-  vt.addRow({"kvDataLen", texture->kvDataLen, ""});
-  vt.addRow({"dataSize", texture->dataSize, ""});
+  VariadicTable<std::string, int, std::string, std::string> vt({"Field", "Dec", "Hex", "Enum"});
+
+  vt.setColumnFormat({{VariadicTableType::AUTO, VariadicTableJustify::AUTO},
+                      {VariadicTableType::AUTO, VariadicTableJustify::AUTO},
+                      {VariadicTableType::AUTO, VariadicTableJustify::RIGHT},
+                      {VariadicTableType::AUTO, VariadicTableJustify::AUTO}});
+
+  vt.addRow({"glFormat", texture->glFormat, toHex(texture->glFormat), name_from_enum(texture->glFormat)});
+  vt.addRow({"glInternalformat", texture->glInternalformat, toHex(texture->glInternalformat),
+             name_from_enum(texture->glInternalformat)});
+  vt.addRow({"glBaseInternalformat", texture->glBaseInternalformat, toHex(texture->glBaseInternalformat),
+             name_from_enum(texture->glBaseInternalformat)});
+  vt.addRow({"glType", texture->glType, toHex(texture->glType), name_from_enum(texture->glType)});
+  vt.addRow({"isArray", texture->isArray, toHex(texture->isArray), ""});
+  vt.addRow({"isCubemap", texture->isCubemap, toHex(texture->isCubemap), ""});
+  vt.addRow({"isCompressed", texture->isCompressed, toHex(texture->isCompressed), ""});
+  vt.addRow({"generateMipmaps", texture->generateMipmaps, toHex(texture->generateMipmaps), ""});
+  vt.addRow({"baseWidth", texture->baseWidth, toHex(texture->baseWidth), ""});
+  vt.addRow({"baseHeight", texture->baseHeight, toHex(texture->baseHeight), ""});
+  vt.addRow({"baseDepth", texture->baseDepth, toHex(texture->baseDepth), ""});
+  vt.addRow({"numDimensions", texture->numDimensions, toHex(texture->numDimensions), ""});
+  vt.addRow({"numLevels", texture->numLevels, toHex(texture->numLevels), ""});
+  vt.addRow({"numLayers", texture->numLayers, toHex(texture->numLayers), ""});
+  vt.addRow({"numFaces", texture->numFaces, toHex(texture->numFaces), ""});
+  vt.addRow({"kvDataLen", texture->kvDataLen, toHex(texture->kvDataLen), ""});
+  vt.addRow({"dataSize", texture->dataSize, toHex(texture->dataSize), ""});
 
   vt.print(std::cout);
 }

@@ -11,15 +11,41 @@
 #include <cmath>
 
 /**
- * Used to specify the column format
+ * Written by friedmud.
+ * Offered under GPL v2.
+ * Modifications by Jim Blackler.
  */
-enum class VariadicTableColumnFormat
+
+/**
+ * Column type.
+ */
+enum class VariadicTableType
     {
         AUTO,
         SCIENTIFIC,
         FIXED,
         PERCENT
     };
+
+/**
+ * Column justification
+ */
+enum class VariadicTableJustify
+{
+    AUTO,
+    LEFT,
+    RIGHT
+};
+
+/**
+ * Used to specify the column format
+ */
+class VariadicTableColumnFormat
+{
+public:
+    VariadicTableType type;
+    VariadicTableJustify justify;
+};
 
 /**
  * A class for "pretty printing" a table of data.
@@ -215,24 +241,39 @@ class VariadicTable
             stream << std::setprecision(_precision[I]);
           }
 
+          VariadicTableColumnFormat &format = _column_format[I];
+
           // Set the format
           if (!_column_format.empty())
           {
             assert(_column_format.size() ==
                        std::tuple_size<typename std::remove_reference<TupleType>::type>::value);
 
-            if (_column_format[I] == VariadicTableColumnFormat::SCIENTIFIC)
+            if (format.type == VariadicTableType::SCIENTIFIC)
               stream << std::scientific;
 
-            if (_column_format[I] == VariadicTableColumnFormat::FIXED)
+            if (format.type == VariadicTableType::FIXED)
               stream << std::fixed;
 
-            if (_column_format[I] == VariadicTableColumnFormat::PERCENT)
+            if (format.type == VariadicTableType::PERCENT)
               stream << std::fixed << std::setprecision(2);
           }
 
+          left_type justifyFunction;
+          switch(format.justify) {
+            case VariadicTableJustify::AUTO:
+              justifyFunction = justify<decltype(val)>(0);
+              break;
+            case VariadicTableJustify::LEFT:
+              justifyFunction = std::left;
+              break;
+            case VariadicTableJustify::RIGHT:
+              justifyFunction = std::right;
+              break;
+          }
+
           stream << std::string(_cell_padding, ' ') << std::setw(_column_sizes[I])
-                 << justify<decltype(val)>(0) << val << std::string(_cell_padding, ' ') << "|";
+                 << justifyFunction << val << std::string(_cell_padding, ' ') << "|";
 
           // Unset the format
           if (!_column_format.empty())
@@ -316,7 +357,7 @@ class VariadicTable
 
           // Override for Percent
           if (!_column_format.empty())
-            if (_column_format[I] == VariadicTableColumnFormat::PERCENT)
+            if (_column_format[I].type == VariadicTableType::PERCENT)
               sizes[I] = 6; // 100.00
 
           // Continue the recursion
