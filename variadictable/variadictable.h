@@ -243,6 +243,8 @@ class VariadicTable
 
           VariadicTableColumnFormat &format = _column_format[I];
 
+          left_type justifyFunction = justify<decltype(val)>(0);
+
           // Set the format
           if (!_column_format.empty())
           {
@@ -257,19 +259,17 @@ class VariadicTable
 
             if (format.type == VariadicTableType::PERCENT)
               stream << std::fixed << std::setprecision(2);
-          }
 
-          left_type justifyFunction;
-          switch(format.justify) {
-            case VariadicTableJustify::AUTO:
-              justifyFunction = justify<decltype(val)>(0);
-              break;
-            case VariadicTableJustify::LEFT:
-              justifyFunction = std::left;
-              break;
-            case VariadicTableJustify::RIGHT:
-              justifyFunction = std::right;
-              break;
+            switch(format.justify) {
+              case VariadicTableJustify::AUTO:
+                break;
+              case VariadicTableJustify::LEFT:
+                justifyFunction = std::left;
+                break;
+              case VariadicTableJustify::RIGHT:
+                justifyFunction = std::right;
+                break;
+            }
           }
 
           stream << std::string(_cell_padding, ' ') << std::setw(_column_sizes[I])
