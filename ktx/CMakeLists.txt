@@ -10,6 +10,7 @@ add_library(ktx STATIC
      memstream.c
      swap.c
      texture.c
+     writer.c
     )
 
 target_include_directories(ktx PRIVATE include other_include)
