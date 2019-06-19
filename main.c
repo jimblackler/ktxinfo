@@ -11,17 +11,19 @@ int main(int argc, char** argv) {
   char* filename = 0;
   char* out_filename = 0;
   char* data_string = 0;
+  int width = 8;
   while (true) {
     int option_index = 0;
     static struct option long_options[] = {
         {"file", required_argument, 0, 0},
         {"out", required_argument, 0, 0},
         {"data", required_argument, 0, 0},
+        {"width", required_argument, 0, 0},
         {"help", no_argument, &help_flag, 1},
         {0, 0, 0, 0}
     };
 
-    int c = getopt_long(argc, argv, "f:o:d:h", long_options, &option_index);
+    int c = getopt_long(argc, argv, "f:o:d:w:h", long_options, &option_index);
     if (c == -1) {
       break;
     }
@@ -52,6 +54,17 @@ int main(int argc, char** argv) {
               data_string = strdup(optarg);
             }
             break;
+          case 3:
+            if (strcmp("8", optarg) == 0) {
+              width = 8;
+            } else if (strcmp("16", optarg) == 0) {
+              width = 16;
+            } else if (strcmp("32", optarg) == 0) {
+              width = 32;
+            } else {
+              help_flag = 1;
+            }
+            break;
           default:
             break;
         }
@@ -77,6 +90,16 @@ int main(int argc, char** argv) {
           data_string = strdup(optarg);
         }
         break;
+      case 'w':
+        if (strcmp("8", optarg) == 0) {
+          width = 8;
+        } else if (strcmp("16", optarg) == 0) {
+          width = 16;
+        } else if (strcmp("32", optarg) == 0) {
+          width = 32;
+        } else {
+          help_flag = 1;
+        }
       case 'h':
         help_flag = 1;
         break;
@@ -104,7 +127,12 @@ int main(int argc, char** argv) {
   if (help_flag) {
     printf("ktxifo by jimblackler@gmail.com\n");
     printf("Usage:\n");
-    printf("--file <name of KTX file>\n");
+    printf("--file <name of input KTX file>\n");
+    printf("--out <name of output KTX file>\n");
+    printf("--data <JSON formatted key/value data to load>\n");
+    printf("--width <8, 16, 32 - width of data in key/value>\n");
+    printf("--help\n");
+
   } else {
     ktxTextureCreateFlags flags = KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT;
     ktxTexture* texture;
@@ -112,15 +140,14 @@ int main(int argc, char** argv) {
         ktxTexture_CreateFromNamedFile(filename, flags, &texture);
     switch (error) {
       case KTX_SUCCESS:
-        output_info(texture);
-
         if (data_string) {
-          if (update(texture, data_string) < 0) {
+          if (update(texture, data_string, width) < 0) {
             result = EXIT_FAILURE;
             printf("Error updating data\n");
             break;
           }
         }
+        output_info(texture, width);
 
         if (out_filename) {
           KTX_error_code error2 =

@@ -1,0 +1,1 @@
+bool infer_string(const char* string, int length);

@@ -6,6 +6,7 @@ extern "C" {
 
 #include <sstream>
 #include <cstring>
+#include "string_utils.h"
 #include "variadictable.h"
 
 #define PADN(n, nbytes) (nbytes + (n-1) & ~(ktx_uint32_t)(n-1))
@@ -62,8 +63,9 @@ void output_header(ktxTexture* texture) {
 }
 
 
-void output_key_values(ktxTexture* texture) {
-  VariadicTable<std::string, std::string> vt({"Key", "Value"});
+void output_key_values(ktxTexture* texture, int width) {
+  VariadicTable<std::string, std::string, std::string>
+      vt({"Key", "Text", "Bytes"});
 
   unsigned int kvdLen;
   unsigned char* pKvd;
@@ -76,7 +78,35 @@ void output_key_values(ktxTexture* texture) {
     char* key = src;
     unsigned int keyLen = (unsigned int) strlen(key) + 1;
     char* value = key + keyLen;
-    vt.addRow({key, value});
+    auto valueLen = keyAndValueByteSize - keyLen;
+    char* valueEnd = value + valueLen;
+    std::string bytes;
+    std::string separator;
+    if (width == 8) {
+      for (auto ptr = (uint8_t*) value; ptr < (uint8_t*) valueEnd; ptr++) {
+        bytes += separator;
+        bytes += std::to_string(*ptr);
+        separator = std::string(", ");
+      }
+    } else if (width == 16) {
+      for (auto ptr = (uint16_t*) value; ptr < (uint16_t*) valueEnd; ptr++) {
+        bytes += separator;
+        bytes += std::to_string(*ptr);
+        separator = std::string(", ");
+      }
+    } else if (width == 32) {
+      for (auto ptr = (uint32_t*) value; ptr < (uint32_t*) valueEnd; ptr++) {
+        bytes += separator;
+        bytes += std::to_string(*ptr);
+        separator = std::string(", ");
+      }
+    }
+    std::string as_string;
+    if (infer_string(value, valueLen)) {
+      as_string = std::string(value, valueLen - 1);
+    }
+
+    vt.addRow({key, as_string, bytes});
     src += PADN(4, keyAndValueByteSize);
   }
 
@@ -84,7 +114,7 @@ void output_key_values(ktxTexture* texture) {
 }
 
 
-void output_info(ktxTexture* texture) {
+void output_info(ktxTexture* texture, int width) {
   output_header(texture);
-  output_key_values(texture);
+  output_key_values(texture, width);
 }

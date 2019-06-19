@@ -1,3 +1,3 @@
 #include <ktx.h>
 
-void output_info(ktxTexture* texture);
+void output_info(ktxTexture* texture, int i);
