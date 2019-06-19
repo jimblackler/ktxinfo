@@ -65,6 +65,12 @@ int update(ktxTexture* texture, char* data_string, int width) {
       } else if (width == 32) {
         writeArray<uint32_t>(texture, key_string, array);
       }
+    } else if (value_object->IsString()) {
+      const std::string& string = wstring_to_string(value_object->AsString());
+      ktxHashList_AddKVPair(&texture->kvDataHead,
+                            key_string,
+                            (unsigned int) string.length() + 1,
+                            string.c_str());
     }
   }
   return 0;
