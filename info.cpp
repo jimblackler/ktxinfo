@@ -62,10 +62,8 @@ void output_header(ktxTexture* texture) {
   vt.print(std::cout);
 }
 
-
 void output_key_values(ktxTexture* texture, int width) {
-  VariadicTable<std::string, std::string, std::string>
-      vt({"Key", "Text", "Bytes"});
+  VariadicTable<std::string, std::string> vt({"Key", "Value"});
 
   unsigned int kvdLen;
   unsigned char* pKvd;
@@ -80,33 +78,34 @@ void output_key_values(ktxTexture* texture, int width) {
     char* value = key + keyLen;
     auto valueLen = keyAndValueByteSize - keyLen;
     char* valueEnd = value + valueLen;
-    std::string bytes;
-    std::string separator;
-    if (width == 8) {
-      for (auto ptr = (uint8_t*) value; ptr < (uint8_t*) valueEnd; ptr++) {
-        bytes += separator;
-        bytes += std::to_string(*ptr);
-        separator = std::string(", ");
-      }
-    } else if (width == 16) {
-      for (auto ptr = (uint16_t*) value; ptr < (uint16_t*) valueEnd; ptr++) {
-        bytes += separator;
-        bytes += std::to_string(*ptr);
-        separator = std::string(", ");
-      }
-    } else if (width == 32) {
-      for (auto ptr = (uint32_t*) value; ptr < (uint32_t*) valueEnd; ptr++) {
-        bytes += separator;
-        bytes += std::to_string(*ptr);
-        separator = std::string(", ");
-      }
-    }
+
     std::string as_string;
     if (infer_string(value, valueLen)) {
       as_string = std::string(value, valueLen - 1);
+    } else {
+      std::string separator;
+      if (width == 8) {
+        for (auto ptr = (uint8_t*) value; ptr < (uint8_t*) valueEnd; ptr++) {
+          as_string += separator;
+          as_string += std::to_string(*ptr);
+          separator = std::string(", ");
+        }
+      } else if (width == 16) {
+        for (auto ptr = (uint16_t*) value; ptr < (uint16_t*) valueEnd; ptr++) {
+          as_string += separator;
+          as_string += std::to_string(*ptr);
+          separator = std::string(", ");
+        }
+      } else if (width == 32) {
+        for (auto ptr = (uint32_t*) value; ptr < (uint32_t*) valueEnd; ptr++) {
+          as_string += separator;
+          as_string += std::to_string(*ptr);
+          separator = std::string(", ");
+        }
+      }
     }
 
-    vt.addRow({key, as_string, bytes});
+    vt.addRow({key, as_string});
     src += PADN(4, keyAndValueByteSize);
   }
 
